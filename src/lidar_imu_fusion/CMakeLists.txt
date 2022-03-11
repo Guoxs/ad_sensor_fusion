@@ -22,6 +22,7 @@ find_package(catkin REQUIRED COMPONENTS
   tf
 )
 
+set(OpenCV_DIR "/usr/local/include/opencv4")
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
 find_package(OpenMP REQUIRED)

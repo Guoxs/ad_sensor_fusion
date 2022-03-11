@@ -16,7 +16,6 @@ void CameraCameraSync::getFiles(string path, vector<string>& files)
 
     char* basePath = const_cast<char*>(path.c_str()); 
 
-
     if ((dir=opendir(basePath)) == NULL)
     {
         perror("Open dir error...");
@@ -139,9 +138,9 @@ double CameraCameraSync::evaluateImageTimeStampSync(cv::Mat orgImage, cv::Mat ds
     {
         for (int u = 0; u < width; u++)
         {
-            sigma_x += (orgImage.at<uchar>(v, u) - mean_x)* (orgImage.at<uchar>(v, u) - mean_x);
+            sigma_x += (orgImage.at<uchar>(v, u) - mean_x) * (orgImage.at<uchar>(v, u) - mean_x);
             sigma_y += (dstImage.at<uchar>(v, u) - mean_y)* (dstImage.at<uchar>(v, u) - mean_y);
-            sigma_xy += std::abs((orgImage.at<uchar>(v, u) - mean_x)* (dstImage.at<uchar>(v, u) - mean_y));
+            sigma_xy += std::abs((orgImage.at<uchar>(v, u) - mean_x) * (dstImage.at<uchar>(v, u) - mean_y));
         }
     }
     sigma_x = sigma_x / (width*height - 1);
@@ -160,23 +159,16 @@ void CameraCameraSync::spatialSynchronization(cv::Mat srcImage1, cv::Mat srcImag
 	int minHessian = 400;//SURF算法中的hessian阈值
     std::vector<cv::KeyPoint> keypoints_object, keypoints_scene;//vector模板类，存放任意类型的动态数组
     cv::Mat descriptors_object, descriptors_scene;
-	cv::Ptr<cv::FeatureDetector> detector = cv::xfeatures2d::SurfFeatureDetector::create(minHessian);
-	
-    cv::Ptr <cv::xfeatures2d::SURF> extractor = cv::xfeatures2d::SURF::create(minHessian);
+    cv::Ptr <cv::xfeatures2d::SURF> detector = cv::xfeatures2d::SURF::create(minHessian);
     
-	//调用detect函数检测出SURF特征关键点，保存在vector容器中
-	detector->detect(srcImage1, keypoints_object);
-	detector->detect(srcImage2, keypoints_scene);
-
-    //特征点描述，为下边的特征点匹配做准备  
-    cv::Mat matshow1, matshow2, kp1, kp2; 
-    extractor->compute(srcImage1, keypoints_object, descriptors_object);
-	extractor->compute(srcImage2, keypoints_scene, descriptors_scene);
+	//调用detect函数检测出SURF特征关键点，保存在vector容器中, 并计算特征点描述，为下边的特征点匹配做准备
+	detector->detectAndCompute(srcImage1, cv::noArray(), keypoints_object, descriptors_object);
+	detector->detectAndCompute(srcImage2, cv::noArray(), keypoints_scene, descriptors_scene);
 
     //使用FLANN匹配算子进行匹配
     cv::FlannBasedMatcher matcher;
-    std::vector<cv::DMatch> matchePoints;
-    matcher.match(descriptors_object, descriptors_scene, matchePoints);
+    std::vector<cv::DMatch> matchedPoints;
+    matcher.match(descriptors_object, descriptors_scene, matchedPoints);
 
     //最小距离和最大距离
     double max_dist = 0; 
@@ -185,7 +177,7 @@ void CameraCameraSync::spatialSynchronization(cv::Mat srcImage1, cv::Mat srcImag
 	//计算出关键点之间距离的最大值和最小值
 	for (int i = 0; i < descriptors_object.rows; i++)
 	{
-		double dist = matchePoints[i].distance;
+		double dist = matchedPoints[i].distance;
 		if (dist < min_dist) min_dist = dist;
 		if (dist > max_dist) max_dist = dist;
 	}
@@ -198,9 +190,9 @@ void CameraCameraSync::spatialSynchronization(cv::Mat srcImage1, cv::Mat srcImag
  
 	for (int i = 0; i < descriptors_object.rows; i++)
 	{
-		if (matchePoints[i].distance < 2.5 * min_dist)
+		if (matchedPoints[i].distance < 2.5 * min_dist)
 		{
-			goodMatches.push_back(matchePoints[i]);
+			goodMatches.push_back(matchedPoints[i]);
 		}
 	}
     
@@ -241,7 +233,9 @@ void CameraCameraSync::spatialSynchronization(cv::Mat srcImage1, cv::Mat srcImag
     
     char name[1024];
     sprintf(name, "效果_%d.jpg", timep);
-    
+
+    cv::imshow(name, imgMatches);
+    cv::waitKey();
     cv::imwrite(name,imgMatches);
 
 }

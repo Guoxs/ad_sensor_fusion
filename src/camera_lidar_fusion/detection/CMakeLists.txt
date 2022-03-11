@@ -4,6 +4,8 @@ project(detection)
 ## Compile as C++11, supported in ROS Kinetic and newer
 add_compile_options(-std=c++14)
 
+set(OpenCV_DIR "/usr/local/include/opencv4")
+
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
@@ -15,7 +17,6 @@ find_package(catkin REQUIRED COMPONENTS
   helper
 )
 
-set(OpenCV_DIR "/usr/local/include/opencv4")
 find_package( OpenCV REQUIRED )
 include_directories( ${OpenCV_INCLUDE_DIRS} )
 

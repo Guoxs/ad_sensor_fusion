@@ -105,7 +105,7 @@ catkin_package(
 #  DEPENDS system_lib
 )
 # 这里修改为自己的opencv路径
-set(OpenCV_DIR "/usr/local/include/opencv4")  
+
 find_package(OpenCV REQUIRED)
 
 ###########

@@ -158,10 +158,10 @@ include_directories(
 #   ${catkin_LIBRARIES}
 # )
 # 这里修改为自己的opencv路径
-set(OpenCV_DIR "/usr/local/include/opencv4")  
+
 find_package(OpenCV REQUIRED)
 
-message(STATUS "    libraries: ${OpenCV_LIBS}")
+message(STATUS "    libraries: ${OpenCV_LIBRARIES}")
 
 include_directories(
   include
@@ -171,7 +171,9 @@ include_directories(
 
 add_library(${PROJECT_NAME} src/camera_camera_sync.cpp)
 add_executable(${PROJECT_NAME}_node src/main.cpp)
-target_link_libraries(${PROJECT_NAME}_node ${PROJECT_NAME} ${catkin_LIBRARIES} boost_system ${OpenCV_LIBS})
+target_link_libraries(${PROJECT_NAME}_node ${PROJECT_NAME} 
+${catkin_LIBRARIES} boost_system ${OpenCV_LIBRARIES} 
+/usr/lib/x86_64-linux-gnu/libopencv_xfeatures2d.so)
 
 #############
 ## Install ##

@@ -12,9 +12,9 @@
 
 DEFINE_int32(icp_max_neighbours, 50 ,"");
 DEFINE_double(icp_radius, 10, "");
-DEFINE_string(icp_source_cloud_filename, "/disk3/sensor_fusion/camera_imu_time_sync/datasets/pcl_pcd/1621586141.699102.pcd", "");
-DEFINE_string(icp_target_cloud_filename, "/disk3/sensor_fusion/camera_imu_time_sync/datasets/pcl_pcd/1621586141.799182.pcd", "");
-DEFINE_string(icp_aligned_cloud_filename, "/tmp/icp.pcd", "");
+DEFINE_string(icp_source_cloud_filename, "/home/guoxs/Documents/ad_sensor_fusion/data/point_clouds_icp/source.pcd", "");
+DEFINE_string(icp_target_cloud_filename, "/home/guoxs/Documents/ad_sensor_fusion/data/point_clouds_icp/target.pcd", "");
+DEFINE_string(icp_aligned_cloud_filename, "/home/guoxs/Documents/ad_sensor_fusion/data/point_clouds_icp/result.pcd", "");
 DEFINE_double(icp_source_filter_size, 5, "");
 DEFINE_double(icp_target_filter_size, 0, "");
 DEFINE_bool(icp_save_aligned_cloud, true, "");
@@ -51,6 +51,8 @@ void loadPointClouds(const std::string source_cloud_filename,
 
 
 int main(int argc, char** argv) {
+  FLAGS_alsologtostderr = 1;
+  
   google::InitGoogleLogging(argv[0]);
   google::ParseCommandLineFlags(&argc, &argv, true);
   ros::init(argc, argv, "ICP");

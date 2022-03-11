@@ -15,7 +15,7 @@ find_package(catkin REQUIRED COMPONENTS
     roslib
     )
 
-set(OpenCV_DIR "/usr/local/include/opencv4")  
+
 find_package(OpenCV)
 
 
